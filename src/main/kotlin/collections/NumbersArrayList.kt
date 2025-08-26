@@ -6,17 +6,32 @@ class NumbersArrayList : NumbersMutableList {
         private set
 
     override fun add(number: Int) {
-        if (numbers.size == size) {
-            val newArray = arrayOfNulls<Int>(numbers.size * 2)
-
-            for (index in numbers.indices) {
-                newArray[index] = numbers[index]
-            }
-            numbers = newArray
-        }
+         growIfNeeded()
         numbers[size] = number
         size++
 
+    }
+
+    override fun clear() {
+        numbers = arrayOfNulls(10)
+        size = 0
+    }
+
+    override fun contains(number: Int):Boolean {
+        for (i in 0 until size){
+            if (numbers[i] == number){
+                return true
+            }
+        }
+        return false
+    }
+
+    override fun minus(number: Int) {
+        remove(number)
+    }
+
+    override fun plus(number: Int) {
+        add(number)
     }
 
     override fun get(index: Int): Int {
@@ -37,23 +52,24 @@ class NumbersArrayList : NumbersMutableList {
                 removeAt(i)
             }
         }
-    }
 
-    override fun addForIndex(number: Int, index: Int) {
-        if (index !in 0..size) {
-            throw IndexOutOfBoundsException("Index $index out of range")
+    }
+    private fun growIfNeeded(){
+        if (numbers.size == size) {
+            val newArray = arrayOfNulls<Int>(numbers.size * 2)
+
+            for (index in numbers.indices) {
+                newArray[index] = numbers[index]
+            }
+            numbers = newArray
         }
-        if (size == numbers.size) {
-            add(number)
+    }
+    override fun add(number: Int, index: Int) {
+        growIfNeeded()
+        for (i in size downTo index + 1) {
+            numbers[i] = numbers[i - 1]
         }
-        for (i in index until size + 1) {
-            numbers[i] = numbers[i-1]
-        }
-        if (index in numbers.indices){
-            numbers[index] = number
-        }else {
-            throw IndexOutOfBoundsException("Index $index out of range")
-        }
+        numbers[index] = number
         size++
     }
 

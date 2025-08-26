@@ -31,9 +31,9 @@ fun `When add 100 elements then size is 100`(list: NumbersMutableList){
  @MethodSource("mutableListSource")
  fun `When received element is 5th element the test is successful`(list: NumbersMutableList){
   repeat(10){
-   list.add(it)
+   list+it
   }
- assertEquals(5, list.get(5))
+ assertEquals(5, list[5])
 }@ParameterizedTest
  @MethodSource("mutableListSource")
  fun `When received element is 50th element the test is successful`(list: NumbersMutableList){
@@ -51,6 +51,15 @@ fun `When add 100 elements then size is 100`(list: NumbersMutableList){
         }
         list.removeAt(50)
         assertEquals(99, list.size)
+    }@ParameterizedTest
+    @MethodSource("mutableListSource")
+    fun `If array cleared then test is successful`(list: NumbersMutableList){
+        repeat(100)
+        {
+            list+it
+        }
+        list.clear()
+        assertEquals(0, list.size)
     }
     @ParameterizedTest
     @MethodSource("mutableListSource")
@@ -70,8 +79,8 @@ fun `When add 100 elements then size is 100`(list: NumbersMutableList){
         {
         list.add(it)
         }
-        list.remove(50)
-        assertEquals(51, list.get(50))
+        list-50
+        assertEquals(51, list[50])
     }
     @ParameterizedTest
     @MethodSource("mutableListSource")
@@ -79,8 +88,16 @@ fun `When add 100 elements then size is 100`(list: NumbersMutableList){
         repeat(100) {
             list.add(it)
         }
-        list.addForIndex(8,9)
+        list.add(8,9)
         assertEquals(8,list.get(9))
+    }@ParameterizedTest
+    @MethodSource("mutableListSource")
+    fun `If array contains 52 then test is successful`(list: NumbersMutableList) {
+        repeat(100) {
+            list+it
+        }
+
+        assertEquals(true,list.contains(52))
     }
     @ParameterizedTest
     @MethodSource("mutableListSource")
@@ -88,7 +105,7 @@ fun `When add 100 elements then size is 100`(list: NumbersMutableList){
         repeat(100) {
             list.add(it)
         }
-        list.addForIndex(8,9)
+        list.add(8,9)
         assertEquals(101,list.size)
     }
     @ParameterizedTest
@@ -97,8 +114,17 @@ fun `When add 100 elements then size is 100`(list: NumbersMutableList){
         repeat(100) {
             list.add(it)
         }
-        list.addForIndex(8,9)
+        list.add(8,9)
         assertEquals(9,list.get(10))
+    }
+    @ParameterizedTest
+    @MethodSource("mutableListSource")
+    fun`When after adding number 6 at position 5 the 11th element is 9 then test successful`(list: NumbersMutableList){
+        repeat(10){
+            list.add(it)
+        }
+        list.add(6,5)
+        assertEquals(9,list.get(11))
     }
   companion object{
    @JvmStatic
