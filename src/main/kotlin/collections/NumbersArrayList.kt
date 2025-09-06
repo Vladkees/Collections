@@ -1,7 +1,8 @@
 package org.example.collections
 
-class NumbersArrayList : NumbersMutableList {
-    private var numbers = arrayOfNulls<Int>(10)
+class NumbersArrayList(initialCapacity:Int = INITIAL_CAPACITY) : NumbersMutableList {
+
+    private var numbers = arrayOfNulls<Int>(initialCapacity)
     override var size: Int = 0
         private set
 
@@ -13,7 +14,7 @@ class NumbersArrayList : NumbersMutableList {
     }
 
     override fun clear() {
-        numbers = arrayOfNulls(10)
+        numbers = arrayOfNulls(INITIAL_CAPACITY)
         size = 0
     }
 
@@ -26,6 +27,18 @@ class NumbersArrayList : NumbersMutableList {
         return false
     }
 
+    private fun checkIndex(index: Int){
+        if(index < 0 || index >= size){
+            throw IndexOutOfBoundsException("index: $index size: $size")
+        }
+    }
+    private fun checkIndexForAdding(index: Int){
+        if(index < 0 || index > size){
+            throw IndexOutOfBoundsException("index: $index size: $size")
+        }
+    }
+
+
     override fun minus(number: Int) {
         remove(number)
     }
@@ -35,13 +48,13 @@ class NumbersArrayList : NumbersMutableList {
     }
 
     override fun get(index: Int): Int {
+        checkIndex(index)
         return numbers[index]!!
     }
 
     override fun removeAt(index: Int) {
-        for (i in index until size - 1) {
-            numbers[i] = numbers[i + 1]
-        }
+        checkIndex(index)
+        System.arraycopy(numbers, index+1, numbers, index, size - index - 1)
         numbers[size] = null
         size--
     }
@@ -57,20 +70,18 @@ class NumbersArrayList : NumbersMutableList {
     private fun growIfNeeded(){
         if (numbers.size == size) {
             val newArray = arrayOfNulls<Int>(numbers.size * 2)
-
-            for (index in numbers.indices) {
-                newArray[index] = numbers[index]
-            }
+            System.arraycopy(numbers, 0, newArray, 0, size)
             numbers = newArray
         }
     }
     override fun add(number: Int, index: Int) {
+        checkIndexForAdding(index)
         growIfNeeded()
-        for (i in size downTo index + 1) {
-            numbers[i] = numbers[i - 1]
-        }
+        System.arraycopy(numbers, index, numbers, index+1, size - index )
         numbers[index] = number
         size++
     }
-
+    companion object{
+        private const val INITIAL_CAPACITY = 10
+    }
 }

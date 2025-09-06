@@ -1,8 +1,10 @@
 package collections
 
 import org.example.collections.NumbersArrayList
+import org.example.collections.NumbersLinkedList
 import org.example.collections.NumbersMutableList
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 
@@ -105,17 +107,17 @@ fun `When add 100 elements then size is 100`(list: NumbersMutableList){
         repeat(100) {
             list.add(it)
         }
-        list.add(8,9)
+        list.add(8,8)
         assertEquals(101,list.size)
     }
     @ParameterizedTest
     @MethodSource("mutableListSource")
-    fun `When added 10 to index 9 and the last element is 99 then test is successful`(list: NumbersMutableList) {
+    fun `When putted 10 to index 9 and the last element is 100 then test is successful`(list: NumbersMutableList) {
         repeat(100) {
             list.add(it)
         }
-        list.add(8,9)
-        assertEquals(9,list.get(10))
+        list.add(10,9)
+        assertEquals(99,list.get(100))
     }
     @ParameterizedTest
     @MethodSource("mutableListSource")
@@ -124,10 +126,18 @@ fun `When add 100 elements then size is 100`(list: NumbersMutableList){
             list.add(it)
         }
         list.add(6,5)
-        assertEquals(9,list.get(11))
+        assertEquals(9,list.get(10))
+    }
+    @ParameterizedTest
+    @MethodSource("mutableListSource")
+    fun`when get receive the wrong index then program throw error`(list: NumbersMutableList){
+        repeat(10){
+            list.add(it)
+        }
+        assertThrows<IndexOutOfBoundsException> { list[10] }
     }
   companion object{
    @JvmStatic
-  fun mutableListSource() = listOf(NumbersArrayList())
+  fun mutableListSource() = listOf(NumbersArrayList(), NumbersLinkedList())
   }
  }
