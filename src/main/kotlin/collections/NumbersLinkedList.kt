@@ -7,17 +7,14 @@ class NumbersLinkedList : NumbersMutableList {
     override var size: Int = 0
         private set
     override fun add(number: Int) {
-        if(size == 0){
-            val node = Node(number)
-            first = node
-            last = node
-            size++
-            return
+        val prevLast = last
+        last = Node(item = number, prev = prevLast)
+        if(prevLast == null){
+            first = last
+        }else{
+            prevLast.next = last
         }
-        val newElement = Node(number)
-        last?.next = newElement
-        last = newElement
-        size++
+            size++
     }
 
     override fun add(number: Int, index: Int) {
@@ -27,15 +24,17 @@ class NumbersLinkedList : NumbersMutableList {
             return
         }
         if(index == 0){
-            val node = Node(index, first)
+            val node = Node(null, number, first)
+            first?.prev = node
             first = node
             size++
             return
         }
         val before = getNode(index-1)
         val after = before.next
-        val newNode = Node(number, after)
+        val newNode = Node(before, number, after)
         before.next = newNode
+        after?.prev = newNode
         size++
     }
 
@@ -49,53 +48,53 @@ class NumbersLinkedList : NumbersMutableList {
         if(index == 0)return first!!
         if(index == size-1) return last!!
 
-        var node = first
-        repeat(index){
-            node = node?.next
+        if (index < size/2)
+        {
+
+            var node = first
+            repeat(index){
+                node = node?.next
+            }
+            return node!!
+        }else{
+            var node = last
+            repeat(size - 1 - index){
+                node = node?.prev
+            }
+            return node!!
         }
-        return node!!
+
     }
 
-    override fun removeAt(index: Int) {
-        checkIndex(index)
-        if(first == last){
-           clear()
-            return
-        }
-        if (index == 0)
-        {
-            first = first?.next
-            size--
-            return
-        }
-        val before = getNode(index -1)
-        val after = before.next?.next
-        before.next = after
-
-        if(after==null){
+    private fun unlink(node: Node){
+        val before = node.prev
+        val after = node.next
+        before?.next = after
+        after?.prev = before
+        if(after == null){
             last = before
+        }
+        if(before == null){
+            first = after
         }
         size--
     }
 
+    override fun removeAt(index: Int) {
+        checkIndex(index)
+        val node = getNode(index)
+        unlink(node)
+    }
+
     override fun remove(number: Int) {
-        if(first?.item == number){
-            removeAt(0)
-            return
-        }
-        var before = first
+       var node = first
         repeat(size){
-            val node = before?.next
             if(node?.item == number){
-                val after = node.next
-                before?.next = after
-                if(after == null){
-                    last = before
-                }
-                size--
+            node?.let { unlink(it) }
                 return
-            }else{
-                before = before?.next
+                }
+            else{
+                node = node?.next
             }
         }
     }
@@ -135,6 +134,6 @@ class NumbersLinkedList : NumbersMutableList {
         remove(number)
     }
 
-    class Node(val item:Int, var next: Node? = null)
+   class Node(var prev: Node? = null, val item:Int, var next: Node? = null )
 
 }
