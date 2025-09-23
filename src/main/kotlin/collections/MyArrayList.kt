@@ -1,14 +1,14 @@
 package org.example.collections
 
-class NumbersArrayList(initialCapacity:Int = INITIAL_CAPACITY) : NumbersMutableList {
+class MyArrayList<T>(initialCapacity:Int = INITIAL_CAPACITY) : MyMutableList<T> {
 
-    private var numbers = arrayOfNulls<Int>(initialCapacity)
+    private var numbers = arrayOfNulls<Any>(initialCapacity)
     override var size: Int = 0
         private set
 
-    override fun add(number: Int) {
+    override fun add(element: T) {
          growIfNeeded()
-        numbers[size] = number
+        numbers[size] = element
         size++
 
     }
@@ -18,9 +18,9 @@ class NumbersArrayList(initialCapacity:Int = INITIAL_CAPACITY) : NumbersMutableL
         size = 0
     }
 
-    override fun contains(number: Int):Boolean {
+    override fun contains(element: T):Boolean {
         for (i in 0 until size){
-            if (numbers[i] == number){
+            if (numbers[i] == element){
                 return true
             }
         }
@@ -39,17 +39,17 @@ class NumbersArrayList(initialCapacity:Int = INITIAL_CAPACITY) : NumbersMutableL
     }
 
 
-    override fun minus(number: Int) {
-        remove(number)
+    override fun minus(element: T) {
+        remove(element)
     }
 
-    override fun plus(number: Int) {
-        add(number)
+    override fun plus(element: T) {
+        add(element)
     }
 
-    override fun get(index: Int): Int {
+    override fun get(index: Int): T {
         checkIndex(index)
-        return numbers[index]!!
+        return numbers[index] as T
     }
 
     override fun removeAt(index: Int) {
@@ -59,9 +59,9 @@ class NumbersArrayList(initialCapacity:Int = INITIAL_CAPACITY) : NumbersMutableL
         size--
     }
 
-    override fun remove(number: Int) {
+    override fun remove(element: T) {
         for (i in 0 until size) {
-            if (numbers[i] == number) {
+            if (numbers[i] == element) {
                 removeAt(i)
             }
         }
@@ -69,16 +69,16 @@ class NumbersArrayList(initialCapacity:Int = INITIAL_CAPACITY) : NumbersMutableL
     }
     private fun growIfNeeded(){
         if (numbers.size == size) {
-            val newArray = arrayOfNulls<Int>(numbers.size * 2)
+            val newArray = arrayOfNulls<Any>(numbers.size * 2)
             System.arraycopy(numbers, 0, newArray, 0, size)
             numbers = newArray
         }
     }
-    override fun add(number: Int, index: Int) {
+    override fun add(element: T, index: Int) {
         checkIndexForAdding(index)
         growIfNeeded()
         System.arraycopy(numbers, index, numbers, index+1, size - index )
-        numbers[index] = number
+        numbers[index] = element
         size++
     }
     companion object{

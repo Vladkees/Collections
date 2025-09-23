@@ -1,16 +1,10 @@
 package org.example.collections
 
 fun main() {
-    val numbers = mutableListOf<Int>()
-    while(true)
+    val numbers = MyHashSet<Int>()
+    repeat(265)
     {
-        val number = readln().toInt()
-        if(number!=0)
-        {
-            numbers.add(number)
-        }else{
-            break
-        }
+        numbers.add(it)
     }
-    numbers.forEach(::println)
+    numbers.elements.forEach(::println)
 }
