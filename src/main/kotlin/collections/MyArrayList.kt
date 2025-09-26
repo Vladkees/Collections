@@ -2,15 +2,15 @@ package org.example.collections
 
 class MyArrayList<T>(initialCapacity:Int = INITIAL_CAPACITY) : MyMutableList<T> {
 
-    private var numbers = arrayOfNulls<Any>(initialCapacity)
+     var numbers = arrayOfNulls<Any>(initialCapacity)
     override var size: Int = 0
         private set
 
-    override fun add(element: T) {
+    override fun add(element: T):Boolean {
          growIfNeeded()
         numbers[size] = element
         size++
-
+        return true
     }
 
     override fun clear() {
@@ -81,6 +81,23 @@ class MyArrayList<T>(initialCapacity:Int = INITIAL_CAPACITY) : MyMutableList<T> 
         numbers[index] = element
         size++
     }
+
+    override fun iterator(): Iterator<T> {
+        return object : Iterator<T>{
+
+            private var nextIndex = 0
+
+            override fun hasNext(): Boolean {
+                return nextIndex < size
+            }
+
+            override fun next(): T {
+                return numbers[nextIndex++] as T
+            }
+
+        }
+    }
+
     companion object{
         private const val INITIAL_CAPACITY = 10
     }

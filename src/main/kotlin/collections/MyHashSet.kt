@@ -97,12 +97,34 @@ class MyHashSet<T> : MyMutableSet<T> {
         }}
         return false
     }
+    override fun iterator(): Iterator<T> {
+        return object : Iterator<T>{
+            var bucketIndex = 0
+            var nextNode:Node<T>? = elements[bucketIndex]
+            var nextIndex = 0
+            override fun hasNext(): Boolean {
+                return nextIndex < size
+            }
+
+            override fun next(): T {
+            while (nextNode==null){
+                nextNode = elements[++bucketIndex]
+            }
+                return nextNode?.item!!.also {
+                    nextIndex++
+                    nextNode = nextNode?.next
+                }
+            }
+            }
+        }
 
    data class Node<T>(
        var prev:Node<T>? = null,
         val item:T,
         var next:Node<T>? = null
     )
+
+
 
     companion object{
         private const val INITIAL_CAPACITY = 16
