@@ -3,10 +3,12 @@ package org.example.collections
 class MyArrayList<T>(initialCapacity:Int = INITIAL_CAPACITY) : MyMutableList<T> {
 
      var numbers = arrayOfNulls<Any>(initialCapacity)
+    private var modCount = 0
     override var size: Int = 0
         private set
 
     override fun add(element: T):Boolean {
+        modCount++
          growIfNeeded()
         numbers[size] = element
         size++
@@ -14,6 +16,7 @@ class MyArrayList<T>(initialCapacity:Int = INITIAL_CAPACITY) : MyMutableList<T> 
     }
 
     override fun clear() {
+        modCount++
         numbers = arrayOfNulls(INITIAL_CAPACITY)
         size = 0
     }
@@ -53,6 +56,7 @@ class MyArrayList<T>(initialCapacity:Int = INITIAL_CAPACITY) : MyMutableList<T> 
     }
 
     override fun removeAt(index: Int) {
+        modCount++
         checkIndex(index)
         System.arraycopy(numbers, index+1, numbers, index, size - index - 1)
         numbers[size] = null
@@ -75,6 +79,7 @@ class MyArrayList<T>(initialCapacity:Int = INITIAL_CAPACITY) : MyMutableList<T> 
         }
     }
     override fun add(element: T, index: Int) {
+        modCount++
         checkIndexForAdding(index)
         growIfNeeded()
         System.arraycopy(numbers, index, numbers, index+1, size - index )
@@ -82,19 +87,24 @@ class MyArrayList<T>(initialCapacity:Int = INITIAL_CAPACITY) : MyMutableList<T> 
         size++
     }
 
-    override fun iterator(): Iterator<T> {
-        return object : Iterator<T>{
+    override fun iterator(): MutableIterator<T> {
+        return object : MutableIterator<T>{
 
             private var nextIndex = 0
+            private var currentModCount = modCount
 
             override fun hasNext(): Boolean {
                 return nextIndex < size
             }
 
             override fun next(): T {
+                if(currentModCount!=modCount){throw ConcurrentModificationException()}
                 return numbers[nextIndex++] as T
             }
 
+            override fun remove() {
+                TODO("Not yet implemented")
+            }
         }
     }
 
